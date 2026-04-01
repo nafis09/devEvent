@@ -1,16 +1,9 @@
 import EventCard from "@/components/EventCard";
 import { IEvent } from "@/database";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+import { getBaseUrl } from "@/lib/base-url";
 
 async function fetchEvents(): Promise<IEvent[]> {
-  if (!BASE_URL) {
-    throw new Error(
-      "NEXT_PUBLIC_BASE_URL is not set (needed to fetch /api/events from the server)."
-    );
-  }
-
-  const res = await fetch(`${BASE_URL}/api/events`);
+  const res = await fetch(new URL("/api/events", getBaseUrl()));
   if (!res.ok) {
     throw new Error(`Failed to load events: ${res.status} ${res.statusText}`);
   }
@@ -37,4 +30,3 @@ export default async function FeaturedEvents() {
     </div>
   );
 }
-

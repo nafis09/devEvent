@@ -5,8 +5,7 @@ import {getSimilarEventsBySlug} from "@/lib/actions/event.actions";
 import {IEvent} from "@/database";
 import EventCard from "@/components/EventCard";
 import {cacheLife} from "next/cache";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+import { getBaseUrl } from "@/lib/base-url";
 
 const EventDetailItem = ({ icon, alt, label }: { icon: string; alt: string; label:string }) => (
     <div className="flex-row-gap-2 items-center">
@@ -84,9 +83,7 @@ const EventDetails = async ( {params}: { params: Promise<string> }  ) => {
     // @ts-ignore
     const { slug } = await params;
 
-    const url = BASE_URL
-        ? `${BASE_URL.replace(/\/$/, '')}/api/events/${slug}`
-        : `/api/events/${slug}`;
+    const url = new URL(`/api/events/${slug}`, getBaseUrl());
 
     const request = await fetch(url);
     if (!request.ok) return notFound();

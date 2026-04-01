@@ -80,8 +80,7 @@ const EventDetails = async ( {params}: { params: Promise<string> }  ) => {
     'use cache';
     cacheLife('hours');
 
-    // @ts-ignore
-    const { slug } = await params;
+    const slug = await params;
 
     const url = new URL(`/api/events/${slug}`, getBaseUrl());
 

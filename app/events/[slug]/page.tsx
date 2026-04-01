@@ -2,6 +2,9 @@ import {notFound} from "next/navigation";
 import Image from "next/image";
 import { cacheLife } from "next/cache";
 import BookEvent from "@/components/BookEvent";
+import {getSimilarEventsBySlug} from "@/lib/actions/event.actions";
+import {IEvent} from "@/database";
+import EventCard from "@/components/EventCard";
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -99,6 +102,10 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
 
     const bookings = 10;
 
+    // `getSimilarEventsBySlug` should return an array, but guard anyway to avoid runtime crashes.
+    const similarEventsResult = await getSimilarEventsBySlug(slug)
+    const similarEvents: IEvent[] = Array.isArray(similarEventsResult) ? (similarEventsResult as IEvent[]) : []
+
     return (
         <section id="event">
            <div className="header">
@@ -150,6 +157,20 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
                         <BookEvent />
                     </div>
                 </aside>
+            </div>
+
+            <div className="flex w-full flex-col gap-4 pt-20">
+                <h2>Similar Events</h2>
+
+                <div className="events">
+                    {similarEvents.length > 0 ? (
+                        similarEvents.map((similarEvent: IEvent) => (
+                            <EventCard key={similarEvent.slug ?? similarEvent.title} {...similarEvent} />
+                        ))
+                    ) : (
+                        <p className="text-sm opacity-70">No similar events found.</p>
+                    )}
+                </div>
             </div>
         </section>
     )
